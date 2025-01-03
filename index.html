@@ -87,30 +87,6 @@
             -webkit-line-clamp: 4;
             overflow: hidden;
         }
-        .delete-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            display: none; /* Initially hidden */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .delete-btn:hover {
-            background-color: #c0392b;
-        }
-        .note:hover .delete-btn {
-            display: flex; /* Show the delete button when hovering over the note */
-        }
         .note-expanded {
             position: fixed;
             top: 50%;
@@ -136,6 +112,30 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: none; /* Initially hidden */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        .note-expanded:hover .delete-btn {
+            display: flex; /* Show the delete button when hovering over the expanded note */
         }
     </style>
 </head>
@@ -173,16 +173,6 @@
 
                 // Store the full note content
                 note.dataset.content = noteInput;
-
-                // Add delete button to the note
-                const deleteButton = document.createElement('button');
-                deleteButton.className = 'delete-btn';
-                deleteButton.textContent = '×';
-                deleteButton.onclick = function(event) {
-                    event.stopPropagation();
-                    deleteNote(note, noteTitle);
-                };
-                note.appendChild(deleteButton);
 
                 // Add event listener to expand the note
                 note.addEventListener('click', (e) => {
@@ -225,12 +215,22 @@
             content.textContent = note.dataset.content;
             expandedNote.appendChild(content);
 
+            // Create and add the delete button to the expanded note
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-btn';
+            deleteButton.textContent = '×';
+            deleteButton.onclick = function(event) {
+                event.stopPropagation();
+                deleteNote(note, note.querySelector('h3').textContent);
+            };
+            expandedNote.appendChild(deleteButton);
+
             expandedNote.addEventListener('click', (e) => e.stopPropagation());
 
             document.body.appendChild(expandedNote);
         }
 
-        // Close expanded note when clicking anywhere else on the body
+        // Function to close expanded note when clicking anywhere else on the body
         document.addEventListener('click', () => {
             const expandedNote = document.querySelector('.note-expanded');
             const overlay = document.querySelector('.overlay');
@@ -262,16 +262,6 @@
 
                 // Store the full note content
                 noteElement.dataset.content = note.content;
-
-                // Add delete button to the note
-                const deleteButton = document.createElement('button');
-                deleteButton.className = 'delete-btn';
-                deleteButton.textContent = '×';
-                deleteButton.onclick = function(event) {
-                    event.stopPropagation();
-                    deleteNote(noteElement, note.title);
-                };
-                noteElement.appendChild(deleteButton);
 
                 // Add event listener to expand the note
                 noteElement.addEventListener('click', (e) => {
