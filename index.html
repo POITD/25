@@ -108,6 +108,9 @@
         .delete-btn:hover {
             background-color: #c0392b;
         }
+        .note:hover .delete-btn {
+            display: flex; /* Show the delete button when hovering over the note */
+        }
         .note-expanded {
             position: fixed;
             top: 50%;
@@ -184,7 +187,6 @@
                 // Add event listener to expand the note
                 note.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    toggleDeleteButton(note);
                     expandNote(note);
                 });
 
@@ -274,18 +276,11 @@
                 // Add event listener to expand the note
                 noteElement.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    toggleDeleteButton(noteElement);
                     expandNote(noteElement);
                 });
 
                 notesContainer.appendChild(noteElement);
             });
-        }
-
-        // Function to toggle the visibility of the delete button
-        function toggleDeleteButton(note) {
-            const deleteButton = note.querySelector('.delete-btn');
-            deleteButton.style.display = deleteButton.style.display === 'none' ? 'flex' : 'none';
         }
 
         // Function to delete a note from the page and localStorage
