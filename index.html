@@ -98,6 +98,7 @@
             border: none;
             border-radius: 50%;
             font-size: 1.2rem;
+            display: none; /* Initially hidden */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -183,6 +184,7 @@
                 // Add event listener to expand the note
                 note.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    toggleDeleteButton(note);
                     expandNote(note);
                 });
 
@@ -272,11 +274,18 @@
                 // Add event listener to expand the note
                 noteElement.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    toggleDeleteButton(noteElement);
                     expandNote(noteElement);
                 });
 
                 notesContainer.appendChild(noteElement);
             });
+        }
+
+        // Function to toggle the visibility of the delete button
+        function toggleDeleteButton(note) {
+            const deleteButton = note.querySelector('.delete-btn');
+            deleteButton.style.display = deleteButton.style.display === 'none' ? 'flex' : 'none';
         }
 
         // Function to delete a note from the page and localStorage
