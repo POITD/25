@@ -221,7 +221,7 @@
             deleteButton.textContent = '×';
             deleteButton.onclick = function(event) {
                 event.stopPropagation();
-                deleteNote(note, note.querySelector('h3').textContent);
+                deleteNote(note, expandedNote, overlay);
             };
             expandedNote.appendChild(deleteButton);
 
@@ -274,13 +274,15 @@
         }
 
         // Function to delete a note from the page and localStorage
-        function deleteNote(noteElement, noteTitle) {
+        function deleteNote(noteElement, expandedNote, overlay) {
             let notes = JSON.parse(localStorage.getItem('notes')) || [];
-            notes = notes.filter(note => note.title !== noteTitle);
+            notes = notes.filter(note => note.title !== noteElement.querySelector('h3').textContent);
             localStorage.setItem('notes', JSON.stringify(notes));
 
             // Remove the note from the page
             noteElement.remove();
+            expandedNote.remove();
+            overlay.remove();
         }
     </script>
 </body>
