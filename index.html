@@ -105,31 +105,13 @@
         <div class="notes" id="notesContainer"></div>
     </main>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-
     <script>
-        // Firebase configuration (replace with your Firebase project's settings)
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        // Load notes from Firebase when the page loads
+        // Load notes from localStorage when the page loads
         window.onload = function() {
             loadNotes();
         };
 
+        // Function to add a new note
         function addNote() {
             const noteTitle = document.getElementById('noteTitle').value;
             const noteInput = document.getElementById('noteInput').value;
@@ -155,8 +137,8 @@
 
                 notesContainer.appendChild(note);
 
-                // Save the note to Firebase
-                saveNoteToFirebase(noteTitle, noteInput);
+                // Save the note to localStorage
+                saveNoteToLocalStorage(noteTitle, noteInput);
 
                 // Clear input fields after saving
                 document.getElementById('noteTitle').value = '';
@@ -166,6 +148,7 @@
             }
         }
 
+        // Function to expand a note when clicked
         function expandNote(note) {
             const overlay = document.createElement('div');
             overlay.className = 'overlay';
@@ -202,42 +185,36 @@
             }
         });
 
-        // Save note to Firebase
-        function saveNoteToFirebase(title, content) {
-            const noteRef = db.ref('notes').push();
-            noteRef.set({
-                title: title,
-                content: content
-            });
+        // Function to save notes to localStorage
+        function saveNoteToLocalStorage(title, content) {
+            let notes = JSON.parse(localStorage.getItem('notes')) || [];
+            notes.push({ title, content });
+            localStorage.setItem('notes', JSON.stringify(notes));
         }
 
-        // Load notes from Firebase
+        // Function to load notes from localStorage
         function loadNotes() {
             const notesContainer = document.getElementById('notesContainer');
-            const notesRef = db.ref('notes');
-            notesRef.once('value', (snapshot) => {
-                const notes = snapshot.val();
-                for (let id in notes) {
-                    const note = notes[id];
-                    const noteElement = document.createElement('div');
-                    noteElement.className = 'note';
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            notes.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note';
 
-                    // Display the title only initially
-                    const title = document.createElement('h3');
-                    title.textContent = note.title;
-                    noteElement.appendChild(title);
+                // Display the title only initially
+                const title = document.createElement('h3');
+                title.textContent = note.title;
+                noteElement.appendChild(title);
 
-                    // Store the full note content
-                    noteElement.dataset.content = note.content;
+                // Store the full note content
+                noteElement.dataset.content = note.content;
 
-                    // Add event listener to expand the note
-                    noteElement.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        expandNote(noteElement);
-                    });
+                // Add event listener to expand the note
+                noteElement.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    expandNote(noteElement);
+                });
 
-                    notesContainer.appendChild(noteElement);
-                }
+                notesContainer.appendChild(noteElement);
             });
         }
     </script>
